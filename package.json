@@ -1,0 +1,33 @@
+{
+  "name": "zr1-optimizer",
+  "version": "1.0.0",
+  "description": "Optimizador de máxima velocidad para Node.js - Creado por Corvette Script",
+  "main": "src/index.js",
+  "type": "module",
+  "keywords": [
+    "optimizador",
+    "velocidad",
+    "rendimiento",
+    "cache",
+    "nodejs",
+    "bot",
+    "rapido"
+  ],
+  "author": "Corvette Script",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ScriptGray/zr1-optimizer"
+  },
+  "dependencies": {
+    "quick-lru": "^6.1.0",
+    "p-limit": "^4.0.0"
+  },
+  "scripts": {
+    "test": "node tests/engine.test.js",
+    "start": "node examples/basic-usage.js"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
+}
