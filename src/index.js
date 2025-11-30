@@ -51,15 +51,10 @@ class ZR1Optimizer {
     initialize() {
         if (this.initialized) return;
         
-        this.logger.info('🚀 Inicializando ZR1 Optimizer Profesional...');
-        
         this.v8.enableDeepOptimization();
-        
         
         if (this.memory && typeof this.memory.start === 'function') {
             this.memory.start();
-        } else {
-            this.logger.warn('MemoryOptimizer no tiene método start');
         }
         
         this.eventLoop.enableMonitoring();
@@ -79,9 +74,8 @@ class ZR1Optimizer {
         this.optimizers.set('loader', this.loader);
         
         this.initialized = true;
-        this.logger.info('✅ ZR1 Optimizer inicializado correctamente');
         
-        console.log('\x1b[31m%s\x1b[0m', '🚀 ZR1 OPTIMIZER PROFESIONAL ACTIVADO');
+        console.log('\x1b[31m%s\x1b[0m\x1b[37m%s\x1b[0m', '🚀 ZR1 OPTIMIZER ', 'ACTIVADO CORRECTAMENTE');
     }
 
     getOptimizer(name) {
@@ -130,6 +124,5 @@ setTimeout(() => {
     try {
         zr1.initialize();
     } catch (error) {
-        console.log('ZR1: Error en inicialización:', error.message);
     }
 }, 1000);
