@@ -1,4 +1,4 @@
-import { performance, monitorEventLoopDelay } from 'perf_hooks';
+                    import { performance, monitorEventLoopDelay } from 'perf_hooks';
 import v8 from 'v8';
 
 export class V8Optimizer {
@@ -26,12 +26,11 @@ export class V8Optimizer {
 
     optimizeV8Flags() {
         try {
-            v8.setFlagsFromString('--max_old_space_size=4096');
-            v8.setFlagsFromString('--max_semi_space_size=128');
-            v8.setFlagsFromString('--optimize_for_size');
-            v8.setFlagsFromString('--max_inlined_source_size=1000');
-            v8.setFlagsFromString('--use_idle_notification');
-            this.stats.v8FlagsSet += 5;
+            v8.setFlagsFromString('--max-old-space-size=4096');
+            v8.setFlagsFromString('--max-semi-space-size=128');
+            v8.setFlagsFromString('--optimize-for-size');
+            v8.setFlagsFromString('--use-idle-notification');
+            this.stats.v8FlagsSet += 4;
         } catch (e) {}
     }
 
