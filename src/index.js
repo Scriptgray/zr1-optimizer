@@ -1,37 +1,18 @@
-import { Engine } from './core/Engine.js';
+import { v8Optimizer } from './optimizer/V8Optimizer.js';
+import { advancedCache } from './optimizer/AdvancedCache.js';
+import { networkTurbo } from './optimizer/NetworkTurbo.js';
 import { speedBooster } from './optimizer/SpeedBooster.js';
 import { memoryOptimizer } from './optimizer/MemoryOptimizer.js';
-import { networkOptimizer } from './optimizer/NetworkOptimizer.js';
-import { eventLoopOptimizer } from './optimizer/EventLoopOptimizer.js';
-import { databaseOptimizer } from './optimizer/DatabaseOptimizer.js';
-import { cpuOptimizer } from './optimizer/CpuOptimizer.js';
 
-const zr1Engine = new Engine();
+v8Optimizer.enableDeepOptimization();
+memoryOptimizer.start();
 
-memoryOptimizer.enableAutoCleanup();
-eventLoopOptimizer.enableMonitoring();
+console.log('\x1b[31m%s\x1b[0m', '🚀 ZR1 OPTIMIZER AVANZADO ACTIVADO');
 
-export default Engine;
 export { 
-    zr1Engine, 
-    speedBooster, 
-    memoryOptimizer, 
-    networkOptimizer, 
-    eventLoopOptimizer, 
-    databaseOptimizer,
-    cpuOptimizer
+    v8Optimizer,
+    advancedCache, 
+    networkTurbo,
+    speedBooster,
+    memoryOptimizer
 };
-
-process.on('SIGINT', () => {
-    zr1Engine.shutdown();
-    memoryOptimizer.disable();
-    eventLoopOptimizer.disable();
-    process.exit(0);
-});
-
-process.on('SIGTERM', () => {
-    zr1Engine.shutdown();
-    memoryOptimizer.disable();
-    eventLoopOptimizer.disable();
-    process.exit(0);
-});
