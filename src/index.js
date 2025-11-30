@@ -4,9 +4,12 @@ import { memoryOptimizer } from './optimizer/MemoryOptimizer.js';
 import { networkOptimizer } from './optimizer/NetworkOptimizer.js';
 import { eventLoopOptimizer } from './optimizer/EventLoopOptimizer.js';
 import { databaseOptimizer } from './optimizer/DatabaseOptimizer.js';
+import { ramSaver } from './core/RamSaver.js';
+import { cpuOptimizer } from './optimizer/CpuOptimizer.js';
 
 const zr1Engine = new Engine();
 
+ramSaver.start();
 memoryOptimizer.enableAutoCleanup();
 eventLoopOptimizer.enableMonitoring();
 
@@ -17,11 +20,14 @@ export {
     memoryOptimizer, 
     networkOptimizer, 
     eventLoopOptimizer, 
-    databaseOptimizer
+    databaseOptimizer,
+    ramSaver,
+    cpuOptimizer
 };
 
 process.on('SIGINT', () => {
     zr1Engine.shutdown();
+    ramSaver.stop();
     memoryOptimizer.disable();
     eventLoopOptimizer.disable();
     process.exit(0);
@@ -29,6 +35,7 @@ process.on('SIGINT', () => {
 
 process.on('SIGTERM', () => {
     zr1Engine.shutdown();
+    ramSaver.stop();
     memoryOptimizer.disable();
     eventLoopOptimizer.disable();
     process.exit(0);
