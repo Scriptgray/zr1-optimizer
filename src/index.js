@@ -54,7 +54,14 @@ class ZR1Optimizer {
         this.logger.info('🚀 Inicializando ZR1 Optimizer Profesional...');
         
         this.v8.enableDeepOptimization();
-        this.memory.start();
+        
+        
+        if (this.memory && typeof this.memory.start === 'function') {
+            this.memory.start();
+        } else {
+            this.logger.warn('MemoryOptimizer no tiene método start');
+        }
+        
         this.eventLoop.enableMonitoring();
         
         this.optimizers.set('v8', this.v8);
@@ -119,4 +126,10 @@ export {
     logger
 };
 
-zr1.initialize();
+setTimeout(() => {
+    try {
+        zr1.initialize();
+    } catch (error) {
+        console.log('ZR1: Error en inicialización:', error.message);
+    }
+}, 1000);
