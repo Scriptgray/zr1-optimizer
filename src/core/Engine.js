@@ -2,9 +2,10 @@ import { Memory } from '../utils/Memory.js';
 import { Metrics } from '../utils/Metrics.js';
 import { CacheManager } from './CacheManager.js';
 import { PerformanceMonitor } from './PerformanceMonitor.js';
-import { PromiseOptimizer } from '../optimizers/PromiseOptimizer.js';
-import { TimerOptimizer } from '../optimizers/TimerOptimizer.js';
-import { EventOptimizer } from '../optimizers/EventOptimizer.js';
+import { PromiseOptimizer } from '../optimizer/PromiseOptimizer.js';
+import { TimerOptimizer } from '../optimizer/TimerOptimizer.js';
+import { EventOptimizer } from '../optimizer/EventOptimizer.js';
+import { FsOptimizer } from '../optimizer/FsOptimizer.js';
 import pLimit from 'p-limit';
 
 export class Engine {
@@ -33,10 +34,12 @@ export class Engine {
         this.promiseOptimizer = new PromiseOptimizer(this.cacheManager, this.metrics);
         this.timerOptimizer = new TimerOptimizer();
         this.eventOptimizer = new EventOptimizer(this.cacheManager);
-        
+        this.fsOptimizer = new FsOptimizer(this.cacheManager, this.metrics);
+
         this.promiseOptimizer.enable();
         this.timerOptimizer.enable();
         this.eventOptimizer.enable();
+        this.fsOptimizer.enable();
     }
 
     startMaintenanceCycle() {
@@ -101,6 +104,7 @@ export class Engine {
         this.promiseOptimizer.disable();
         this.timerOptimizer.disable();
         this.eventOptimizer.disable();
+        this.fsOptimizer.disable();
         
         this.cacheManager.clear();
         this.activeOperations.clear();
