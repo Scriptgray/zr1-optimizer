@@ -4,7 +4,6 @@ import { memoryOptimizer } from './optimizer/MemoryOptimizer.js';
 import { networkOptimizer } from './optimizer/NetworkOptimizer.js';
 import { eventLoopOptimizer } from './optimizer/EventLoopOptimizer.js';
 import { databaseOptimizer } from './optimizer/DatabaseOptimizer.js';
-import { ramSaver } from './core/RamSaver.js';
 import { cpuOptimizer } from './optimizer/CpuOptimizer.js';
 
 const zr1Engine = new Engine();
