@@ -1,29 +1,60 @@
+import QuickLRU from 'quick-lru';
+
 export class SpeedBooster {
     constructor() {
+        this.operationCache = new QuickLRU({ maxSize: 1000, maxAge: 30000 });
+        this.functionCache = new QuickLRU({ maxSize: 500, maxAge: 60000 });
         this.stats = {
             cacheHits: 0,
             cacheMisses: 0,
-            optimizedCalls: 0
+            optimizedCalls: 0,
+            timeSaved: 0
         };
     }
 
-    turboFunction(fn) {
+    turboFunction(fn, cacheKey = null, ttl = 30000) {
         const optimizedFn = async (...args) => {
             this.stats.optimizedCalls++;
-            return fn(...args);
+            const startTime = Date.now();
+            
+            const key = cacheKey || `func:${fn.name}:${JSON.stringify(args)}`;
+            
+            if (this.functionCache.has(key)) {
+                this.stats.cacheHits++;
+                this.stats.timeSaved += Date.now() - startTime;
+                return this.functionCache.get(key);
+            }
+            
+            this.stats.cacheMisses++;
+            const result = await fn(...args);
+            this.functionCache.set(key, result, { maxAge: ttl });
+            return result;
         };
+        
         return optimizedFn;
     }
 
-    turboOperation(operationId, operationFn) {
+    turboOperation(operationId, operationFn, ttl = 45000) {
+        const startTime = Date.now();
+        
+        if (this.operationCache.has(operationId)) {
+            this.stats.cacheHits++;
+            this.stats.timeSaved += Date.now() - startTime;
+            return this.operationCache.get(operationId);
+        }
+        
         this.stats.cacheMisses++;
-        return operationFn();
-    }
-
-    parallelExecute(operations) {
-        return Promise.all(
-            operations.map((op, index) => this.turboOperation(`parallel_${index}`, op))
-        );
+        const result = operationFn();
+        
+        if (result && typeof result.then === 'function') {
+            return result.then(finalResult => {
+                this.operationCache.set(operationId, finalResult, { maxAge: ttl });
+                return finalResult;
+            });
+        } else {
+            this.operationCache.set(operationId, result, { maxAge: ttl });
+            return result;
+        }
     }
 
     getPerformanceStats() {
@@ -33,8 +64,14 @@ export class SpeedBooster {
         return {
             ...this.stats,
             hitRate: hitRate.toFixed(2),
-            totalOperations
+            totalOperations,
+            cacheSize: this.operationCache.size + this.functionCache.size
         };
+    }
+
+    clearCache() {
+        this.operationCache.clear();
+        this.functionCache.clear();
     }
 }
 
