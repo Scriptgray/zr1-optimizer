@@ -1,41 +1,42 @@
-import pLimit from 'p-limit';
-
 export class CpuOptimizer {
     constructor() {
-        this.limiter = pLimit(3);
         this.activeOperations = new Map();
+        this.maxConcurrent = 3;
         this.stats = {
             limitedOperations: 0,
-            queueSize: 0,
-            completedOperations: 0
+            completedOperations: 0,
+            waitingOperations: 0
         };
     }
 
-    limitConcurrency(fn, operationId = 'unknown') {
-        return async (...args) => {
-            this.stats.limitedOperations++;
-            this.activeOperations.set(operationId, { start: Date.now() });
-            
-            try {
-                const result = await this.limiter(() => fn(...args));
-                this.stats.completedOperations++;
-                return result;
-            } finally {
-                this.activeOperations.delete(operationId);
-                this.stats.queueSize = this.limiter.pendingCount;
-            }
-        };
+    async limitConcurrency(fn, operationId = 'unknown') {
+        this.stats.limitedOperations++;
+        
+        while (this.activeOperations.size >= this.maxConcurrent) {
+            this.stats.waitingOperations++;
+            await new Promise(resolve => setTimeout(resolve, 50));
+        }
+        
+        this.activeOperations.set(operationId, { start: Date.now() });
+        
+        try {
+            const result = await fn();
+            this.stats.completedOperations++;
+            return result;
+        } finally {
+            this.activeOperations.delete(operationId);
+        }
     }
 
     setConcurrencyLimit(limit) {
-        this.limiter = pLimit(Math.max(1, limit));
+        this.maxConcurrent = Math.max(1, limit);
     }
 
     getStats() {
         return {
             ...this.stats,
             activeOperations: this.activeOperations.size,
-            pendingCount: this.limiter.pendingCount
+            maxConcurrent: this.maxConcurrent
         };
     }
 }
