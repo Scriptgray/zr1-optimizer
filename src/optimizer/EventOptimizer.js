@@ -1,13 +1,15 @@
+import { EventEmitter } from 'events';
+
 export class EventOptimizer {
     constructor(cacheManager) {
         this.cacheManager = cacheManager;
-        this.originalEmit = require('events').EventEmitter.prototype.emit;
+        this.originalEmit = EventEmitter.prototype.emit;
     }
 
     enable() {
         const self = this;
         
-        require('events').EventEmitter.prototype.emit = function(event, ...args) {
+        EventEmitter.prototype.emit = function(event, ...args) {
             const eventKey = `event:${this.constructor.name}:${event}:${JSON.stringify(args)}`;
             
             if (self.cacheManager.has(eventKey)) {
@@ -20,6 +22,6 @@ export class EventOptimizer {
     }
 
     disable() {
-        require('events').EventEmitter.prototype.emit = this.originalEmit;
+        EventEmitter.prototype.emit = this.originalEmit;
     }
 }
