@@ -1,45 +1,42 @@
+import pLimit from 'p-limit';
+
 export class CpuOptimizer {
     constructor() {
-        this.heavyOperations = new Map();
-        this.concurrencyLimit = 3;
+        this.limiter = pLimit(3);
+        this.activeOperations = new Map();
+        this.stats = {
+            limitedOperations: 0,
+            queueSize: 0,
+            completedOperations: 0
+        };
     }
 
-    limitConcurrency(fn, operationId) {
+    limitConcurrency(fn, operationId = 'unknown') {
         return async (...args) => {
-            if (this.heavyOperations.size >= this.concurrencyLimit) {
-                await this.waitForSlot();
-            }
-            
-            const operation = { id: operationId, start: Date.now() };
-            this.heavyOperations.set(operationId, operation);
+            this.stats.limitedOperations++;
+            this.activeOperations.set(operationId, { start: Date.now() });
             
             try {
-                return await fn(...args);
+                const result = await this.limiter(() => fn(...args));
+                this.stats.completedOperations++;
+                return result;
             } finally {
-                this.heavyOperations.delete(operationId);
+                this.activeOperations.delete(operationId);
+                this.stats.queueSize = this.limiter.pendingCount;
             }
         };
     }
 
-    async waitForSlot() {
-        return new Promise(resolve => {
-            const check = () => {
-                if (this.heavyOperations.size < this.concurrencyLimit) {
-                    resolve();
-                } else {
-                    setTimeout(check, 100);
-                }
-            };
-            check();
-        });
-    }
-
     setConcurrencyLimit(limit) {
-        this.concurrencyLimit = Math.max(1, limit);
+        this.limiter = pLimit(Math.max(1, limit));
     }
 
-    getActiveOperations() {
-        return this.heavyOperations.size;
+    getStats() {
+        return {
+            ...this.stats,
+            activeOperations: this.activeOperations.size,
+            pendingCount: this.limiter.pendingCount
+        };
     }
 }
 
