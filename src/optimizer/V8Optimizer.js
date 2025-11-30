@@ -22,7 +22,6 @@ export class V8Optimizer {
         this.optimizeMemoryAllocation();
         
         this.optimizationsApplied = true;
-        console.log('⚡ V8 Deep Optimization ACTIVADA');
     }
 
     optimizeV8Flags() {
