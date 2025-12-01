@@ -1,6 +1,2 @@
-node_modules/
-*.log
-.DS_Store
-.env
-.cache
-dist/
+# Dependencies
+/node_modules

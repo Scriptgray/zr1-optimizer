@@ -1,33 +1,26 @@
 {
-  "name": "zr1-optimizer",
+  "name": "ultra-mode-scraper",
   "version": "1.0.0",
-  "description": "Optimizador de máxima velocidad para Node.js - Creado por Corvette Script",
+  "description": "A scraper focused on low latency, optimization, speed, and low consumption.",
   "main": "src/index.js",
   "type": "module",
-  "keywords": [
-    "optimizador",
-    "velocidad",
-    "rendimiento",
-    "cache",
-    "nodejs",
-    "bot",
-    "rapido"
-  ],
-  "author": "Corvette Script",
-  "license": "MIT",
+  "scripts": {
+    "start": "node src/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "repository": {
     "type": "git",
-    "url": "https://github.com/ScriptGray/zr1-optimizer"
+    "url": "git+https://github.com/Abrahan987/zr1-optimizer.git"
   },
-  "dependencies": {
-    "quick-lru": "^6.1.0",
-    "p-limit": "^4.0.0"
+  "keywords": [
+    "scraper",
+    "optimizer",
+    "performance"
+  ],
+  "author": "ABRAHAN-M",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Abrahan987/zr1-optimizer/issues"
   },
-  "scripts": {
-    "test": "node tests/engine.test.js",
-    "start": "node examples/basic-usage.js"
-  },
-  "engines": {
-    "node": ">=16.0.0"
-  }
+  "homepage": "https://github.com/Abrahan987/zr1-optimizer#readme"
 }
